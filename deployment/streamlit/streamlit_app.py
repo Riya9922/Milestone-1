@@ -36,8 +36,10 @@ st.write(f"**Python Version:** `{sys.version}`")
 
 # Verification: Try to load catalog
 from src.restaurant_rec.phase2 import load_catalog
+from src.restaurant_rec.config import config
 try:
-    df = load_catalog()
+    df = load_catalog(config.catalog_path)
     st.success(f"Successfully loaded catalog with {len(df)} rows.")
 except Exception as e:
     st.error(f"Error loading catalog: {e}")
+
