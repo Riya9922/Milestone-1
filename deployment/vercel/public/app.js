@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentLocationLabel = document.getElementById('current-location');
     const template = document.getElementById('restaurant-template');
 
+    const BACKEND_URL = "https://milestone-1-39voagm5ffmygarhbqpk39.streamlit.app";
+
     // State
     let activeFilters = {
         rating: false,
@@ -23,14 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         veg: false
     };
 
+
+
     // 1. Load Metadata (Localities & Cuisines)
     let allCuisines = [];
     let restoNamesInArea = [];
     try {
 
         const [locResp, cuisResp] = await Promise.all([
-            fetch('/api/v1/localities'),
-            fetch('/api/v1/cuisines')
+            fetch(`${BACKEND_URL}/api/v1/localities`),
+            fetch(`${BACKEND_URL}/api/v1/cuisines`)
         ]);
         
         const locData = await locResp.json();
@@ -67,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function fetchRestoNames() {
         if (!locationSelect.value) return;
         try {
-            const resp = await fetch(`/api/v1/restaurant-names?location=${encodeURIComponent(locationSelect.value)}`);
+            const resp = await fetch(`${BACKEND_URL}/api/v1/restaurant-names?location=${encodeURIComponent(locationSelect.value)}`);
             const data = await resp.json();
             restoNamesInArea = data.names;
         } catch (err) {
@@ -205,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            const resp = await fetch('/api/v1/recommend', {
+            const resp = await fetch(`${BACKEND_URL}/api/v1/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
