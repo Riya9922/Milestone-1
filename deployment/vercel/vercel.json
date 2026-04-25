@@ -1,8 +1,5 @@
 {
   "version": 2,
   "name": "zomato-ai-frontend",
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/public/$1" }
-  ]
+  "cleanUrls": true
 }
