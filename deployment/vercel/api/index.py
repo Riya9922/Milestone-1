@@ -12,3 +12,5 @@ os.environ["CATALOG_PATH"] = str(root_dir / "data" / "processed" / "restaurants.
 from src.restaurant_rec.phase4.app import app
 
 # Vercel needs 'app' to be the FastAPI instance
+app = app
+

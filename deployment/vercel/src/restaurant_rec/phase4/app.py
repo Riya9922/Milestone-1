@@ -11,36 +11,20 @@ from ..config import config
 from ..phase2 import load_catalog, UserPreferences
 from ..phase3 import get_recommendations
 
-# Global state for the catalog
-catalog_df: pd.DataFrame = None
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global catalog_df
-    # Load catalog once at startup
-    try:
-        catalog_df = load_catalog(config.catalog_path)
-        print(f"Catalog loaded successfully with {len(catalog_df)} rows.")
-    except Exception as e:
-        print(f"Error loading catalog at startup: {e}")
-    yield
-    # Cleanup if needed
+# Global state for the catalog - Load at module level for Serverless
+try:
+    catalog_df = load_catalog(config.catalog_path)
+    print(f"Catalog loaded successfully with {len(catalog_df)} rows.")
+except Exception as e:
+    print(f"Error loading catalog: {e}")
     catalog_df = None
 
 
 app = FastAPI(
     title="Restaurant Recommendation API",
     description="AI-powered restaurant recommendations using Groq",
-    version="1.0.0",
-    lifespan=lifespan
+    version="1.0.0"
 )
-
-# Mount static files
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-if not os.path.exists(static_dir):
-    os.makedirs(static_dir)
-
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Enable CORS
 app.add_middleware(
@@ -51,12 +35,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 async def root():
-    index_path = os.path.join(static_dir, "index.html")
-    if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"message": "Welcome to the Restaurant Recommendation API. UI not found."}
+    return {"message": "Restaurant Recommendation API is live!", "status": "ok"}
+
 
 
 @app.get("/api/v1/localities")
